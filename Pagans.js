@@ -127,6 +127,7 @@ Pagans.get = (UUID) => {
 //     })
 //console.log(Pagans.updatePag)
 
+
 //}
 
 
