@@ -48,18 +48,6 @@ Pagans.init = (nbPagan) => {
     }
 }
 
-Pagans.search = (searchstring) => {
-    //console.log(`liste des Pagans contenant ${searchstring} dans le nom`)
-    glob.sync(`${conf.maindir}/data/pagans/*.json`)
-        .forEach(f => {
-            //console.log(f)
-            const pagan = fs.readJsonSync(f);
-            if (pagan.nom && pagan.nom.includes(searchstring)) {
-
-                console.log(pagan)
-            }
-        })
-}
 
 
 Pagans.update = (UUID, data) => {
@@ -74,62 +62,50 @@ Pagans.update = (UUID, data) => {
 }
 
 Pagans.get = (UUID) => {
-    // l'instruction que j'éxécute
-    try {
-        // récupérer les info du fichier et les lire
-        const info = fs.readJsonSync(`${conf.maindir}/data/pagans/${UUID}.json`)
-        console.log(info)
+    // récupérer les info du fichier et les lire
+    const info = fs.readJsonSync(`${conf.maindir}/data/pagans/${UUID}.json`)
+    console.log(info)
 
-        //parser le fichier pour transformer mon JSON en objet
-        const infoData = JSON.parse(info)
-        return infoData
-
-    } catch (error) {
-        console.log("erreur")
-    }
 }
 
 
-//PagansUUID.search = (UUID) => {
-//console.log(`liste des Pagans contenant un UUID`)
-// glob.sync(`${conf.maindir}/data/pagans/${UUID}.json`)
-//.forEach(f => {
-// console.log(f)
-//const pagan = fs.readJsonSync(f);
-//if (pagan.nom && pagan.nom.includes(searchstring)) {
 
-//  console.log(pagan)
-// }
-//   })
-//}
+// passer la chaine de texte en variable (searchstring)
+Pagans.search = (searchstring) => {
+    // rechercher tout les pagans existant via leurs champs "nom" si une chaine de texte existe
+    glob.sync(`${conf.maindir}/data/pagans/*.json`)
+    //parcourir et exécuter une action sur chaque élément du tableau
+    // incrémenter un compteur
+    const paganList = ["pagan1", "pagan2", "pagan3", "pagan4"];
+    let counter = 0;
+    const allPagans = {
+        nombre: paganList.length,
+        liste: paganList
+    };
+
+    console.log(allPagans)
+    paganList.forEach(a => {
+        console.log(a);
+        counter++;
+
+        console.log(counter)
+
+        //la fonction doit me retourner un objet avec un champ nombre de pagans et une clé correspondant a liste des uuid des pagans 
+        // console.log(a)
+        // const Pagan = fs.readJsonSync(a)
+        // if (Pagan.nom.includes(searchstring)) {
+        //     //     //     // afficher les pagans qui répondent aux critères recherchés puis retourner dans un ojbet la liste des UUID.
+        //     return allPagans
+        // }
+        // else {
+        //     return ("error")
+        // }
+    })
+}
+
 
 //récupérer les infos et les lire // utiliser get dans main.js //
 // faire la fonction search pour récuperer les UUID et les afficher avec la fonction get
-
-
-
-
-//console.log(UUID)
-//console.log(glob.sync(`${conf.maindir}/data/pagans/*.json`))
-// glob.sync(`${conf.maindir}/data/pagans/*.json`)
-//     .forEach(f => {
-//         console.log(f)
-//         fs.writeJsonSync(f, data)
-//         if (!fs.pathExistsSync(`${conf.maindir}/data/pagans/${UUID}.json`)) {
-//             console.log(`n'existe pas ${conf.maindir}/data/pagans/${UUID}.json`)
-//         } else {
-//             fs.writeJsonSync(f, data)
-//         }
-
-//         const postPagans = fs.readJsonSync(f, data)
-//         console.log(postPagans)
-
-//     })
-//console.log(Pagans.updatePag)
-
-
-//}
-
 
 
 module.exports = Pagans;
