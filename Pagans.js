@@ -6,35 +6,49 @@ const glob = require('glob');
 const conf = require('./config');
 
 const genereTxtAlea = (nBchar) => {
+    /*
+    Allows you to generate a random name:
+    1. Initialize a txt variable before assigning it a value later in the program
+    2. Make a tank number loop
+    3. (randomly extract a character from an authorized string)
+    4. Using subtring to extract the chain between debutrandom and endrandom
+    5. Output a text string with a certain number of characters corresponding to the variable "nbchar"
+    */
 
     let txt = ""
-    //     // faire une boucle de nb de char
     for (let i = 0; i < nBchar; i++) {
         // console.log(nBchar)
         let charNom = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        // (extraire de façon aléatoire un caractères dans une chaine de caractère autorisé)
         let debutrandomstr = Math.floor(Math.random() * charNom.length);
 
-        // utilisation de subtring pour extraire la chaine entre debutrandom et endrandom
         txt += charNom.substring(debutrandomstr, debutrandomstr + 1);
     }
-    //     //fonction delete dans pagans.init avant de générer les nouveau nom
     //console.log(txt);
     return txt
-    //     // me sortir une chaine de texte avec un certains nombre de caractères correspondant à la variable nbchar
 }
 
 const Pagans = {}
 Pagans.init = (nbPagan) => {
+    /*
+    1.glob function to list all files in pagans and fs.remove to delete all files in data pagans
+    2. ForEach to iterate over all the elements of an array and execute a function for each of these elements.
+    3. fs.remove to delete all the old pagans
+    4. For loop to add pagans
+    5. Const ID with a UUID package to get a UUID
+    6. Allows me to generate random letters with the math random and the function above genereTxtAlea
+    7. fsoutputjson to write a JSON object in a file
+    8. @return (error)
+    */
+    const res = { status: 404, info: "Not found" }
     //console.log(`${config.maindir}/data/toto.json`)
-    //fonction glob pour lister tout les fichiers dans pagans et fs.remove pour delete tous les fichiers qui se trouvent dans data pagans
     glob.sync(`${conf.maindir}/data/pagans/*.json`)
         .forEach(f => {
             fs.remove(f, err => {
-                if (err) return console.error(err)
+                if (err) return res
                 //console.log('success!')
             })
         })
+
     for (let i = 1; i <= nbPagan; i++) {
         // console.log(UUID.v4())
         const ID = (UUID.v4());
@@ -51,61 +65,95 @@ Pagans.init = (nbPagan) => {
 
 
 Pagans.update = (UUID, data) => {
-    // vérifier si UUID existe
-    // si il existe on l'ecrase avec les nouvelles data
+    /*
+    Allows you to update a Pagan:
+    1. Check if UUID exists
+    2. If it exists, it is crushed with the new data
+    3. If everything is OK the function:
+     @return {
+        status: 200,
+        info: "The pagan 'uuid of pagan' has been updated.
+     } else {
+        @return (error) -> ('The pagan doesn't exist')
+     }
+     */
+    const res = { status: 200, info: `Le pagan ${UUID} à été update` }
     if (fs.existsSync(`${conf.maindir}/data/pagans/${UUID}.json`)) {
         fs.writeJsonSync(`${conf.maindir}/data/pagans/${UUID}.json`, data)
-        console.log(`Le pagan ${UUID} à été update`)
+        return res
     } else {
-        console.log(`Le pagan ${UUID} n'existe pas`)
+        return (`Le pagan ${UUID} n'existe pas`)
     }
+
 }
 
 Pagans.get = (UUID) => {
-    // récupérer les info du fichier et les lire
-    const info = fs.readJsonSync(`${conf.maindir}/data/pagans/${UUID}.json`)
-    console.log(info)
-
+    /*
+    Allows you to retrieve the information from the file and read it:
+    @return
+    {
+        Two const in the object (to views the two const) -> info and res
+    }
+    */
+    const info = fs.readJsonSync(`${conf.maindir}/data/pagans/${UUID}.json`);
+    const res = { status: 200, info: "l'information à bien été récupéré" };
+    return { info, res }
 }
 
 
-
-// passer la chaine de texte en variable (searchstring)
+// Switch text string to variable (searchstring)
 Pagans.search = (searchstring) => {
-    // rechercher tout les pagans existant via leurs champs "nom" si une chaine de texte existe
-    glob.sync(`${conf.maindir}/data/pagans/*.json`)
-    //parcourir et exécuter une action sur chaque élément du tableau
-    // incrémenter un compteur
-    const paganList = ["pagan1", "pagan2", "pagan3", "pagan4"];
-    let counter = 0;
-    const allPagans = {
-        nombre: paganList.length,
-        liste: paganList
-    };
+    /*
+    Allows you to search the Pagans:
+    1. Search all existing pagans via their "name" fields if a text string exists
+    2. The constant res is an object with a key "pagans" and an array as a value
+    3. myglob.forEach for browse and perform an action on each element of the array
+    4. fs.readJsonSync is the method for read the files in the pagans folder
 
-    console.log(allPagans)
-    paganList.forEach(a => {
-        console.log(a);
-        counter++;
+     use the method includes and (searchstring) as parameter to know the elements in pagan.name
+     then return me the object in the const "res" with res.pagans (which is the key in the object of the const "res")
+    .push which is the method to add an element in the array and put between parenthesis (Pagan.UUID) to return all the UUID keys
+    (in our case we return all the files in which there is a string "AB" for example. (see main.js)
 
-        console.log(counter)
+    @return
+    { pagans : ['the uuid'], nbPagan: 1, many, or 0 }
+    */
+    const myglob = glob.sync(`${conf.maindir}/data/pagans/*.json`)
+    const res = { pagans: [] }
+    myglob.forEach(a => {
+        const Pagan = fs.readJsonSync(a)
+        //console.log(Pagan)
+        //console.log(a.nom);
 
-        //la fonction doit me retourner un objet avec un champ nombre de pagans et une clé correspondant a liste des uuid des pagans 
-        // console.log(a)
-        // const Pagan = fs.readJsonSync(a)
-        // if (Pagan.nom.includes(searchstring)) {
-        //     //     //     // afficher les pagans qui répondent aux critères recherchés puis retourner dans un ojbet la liste des UUID.
-        //     return allPagans
-        // }
-        // else {
-        //     return ("error")
-        // }
+        if (Pagan.nom.includes(searchstring)) {
+            res.pagans.push(Pagan.UUID);
+        }
     })
+
+    res.nbPagan = res.pagans.length;
+    return res
 }
 
+Pagans.delete = (UUID, data) => {
+    /*
+    Allows you to retrieve the information from the file and read it:
+    @return
+    {
+        status: 200,
+        info: "The 'UUID' Pagan has been deleted"
+    } or 
+    @return (error) -> "The pagan has not been removed"
 
-//récupérer les infos et les lire // utiliser get dans main.js //
-// faire la fonction search pour récuperer les UUID et les afficher avec la fonction get
 
+
+    */
+    const res = { status: 200, info: `Le pagan ${UUID} à bien été supprimé` }
+    if (fs.existsSync(`${conf.maindir}/data/pagans/${UUID}.json`)) {
+        fs.removeSync(`${conf.maindir}/data/pagans/${UUID}.json`, data)
+        return res
+    } else {
+        return (`Le pagan ${UUID} n'à pas été supprimé`)
+    }
+}
 
 module.exports = Pagans;
