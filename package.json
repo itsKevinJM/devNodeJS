@@ -4,6 +4,7 @@
   "description": "",
   "main": "main.js",
   "dependencies": {
+    "express": "^4.18.2",
     "fs-extra": "^11.1.0",
     "glob": "^8.1.0",
     "read-json-sync": "^2.0.1",
