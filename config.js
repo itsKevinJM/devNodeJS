@@ -1,3 +1,3 @@
-const conf={maindir : "/home/kevinjm/Documents/workspace/testkevin"};
+const conf = { maindir: "C:/Users/keke-/OneDrive/Documents/informatique/stage/testkevin" };
 
 module.exports = conf;
